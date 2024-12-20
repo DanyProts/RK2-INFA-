@@ -1,0 +1,13 @@
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,            
+    name VARCHAR(255) NOT NULL,       
+    quantity INTEGER DEFAULT 0       
+);
+CREATE TABLE operations_log (
+    id SERIAL PRIMARY KEY,            
+    product_id INT NOT NULL,          
+    operation VARCHAR(10) NOT NULL,   
+    quantity INT NOT NULL,            
+    timestamp TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
