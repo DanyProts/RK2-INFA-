@@ -1,0 +1,29 @@
+CREATE OR REPLACE PROCEDURE update_stock(
+    product_id INT,
+    operation VARCHAR,
+    quantity INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF operation = 'ADD' THEN
+        UPDATE products
+        SET quantity = quantity + quantity
+        WHERE id = product_id;
+
+    ELSIF operation = 'REMOVE' THEN
+        IF (SELECT quantity FROM products WHERE id = product_id) >= quantity THEN
+            UPDATE products
+            SET quantity = quantity - quantity
+            WHERE id = product_id;
+        ELSE
+            RAISE EXCEPTION 'Недостаточно товара на складе для удаления';
+        END IF;
+
+    ELSE
+        RAISE EXCEPTION 'Неизвестная операция: %', operation;
+    END IF;
+    INSERT INTO operations_log (product_id, operation, quantity)
+    VALUES (product_id, operation, quantity);
+END;
+$$;
