@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION log_stock_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO operations_log (product_id, operation, quantity)
+    VALUES (NEW.id, 'UPDATE', NEW.quantity - OLD.quantity);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER after_stock_update
+AFTER UPDATE ON products
+FOR EACH ROW
+EXECUTE FUNCTION log_stock_change();
