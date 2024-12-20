@@ -1,0 +1,82 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+class BankAccount {
+private:
+    int accountNumber;
+    string ownerName;
+    double balance;
+public:
+    
+    BankAccount(int accountNumber, const string& ownerName, double initialBalance)
+        : accountNumber(accountNumber), ownerName(ownerName), balance(initialBalance) {
+    }
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            cout << "Пополнено на: " << amount << ". Новый баланс: " << balance << endl;
+        }
+        else {
+            cout << "Ошибка: Сумма пополнения должна быть больше нуля." << endl;
+        }
+    }
+
+    void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            cout << "Снято: " << amount << ". Новый баланс: " << balance << endl;
+        }
+        else if (amount > balance) {
+            cout << "Ошибка: Недостаточно средств для снятия." << endl;
+        }
+        else {
+            cout << "Ошибка: Сумма снятия должна быть больше нуля." << endl;
+        }
+    }
+
+    
+    void displayAccountInfo() const {
+        cout << "Номер счёта: " << accountNumber << endl;
+        cout << "Владелец: " << ownerName << endl;
+        cout << "Баланс: " << balance << endl;
+    }
+};
+
+
+class SavingsAccount : public BankAccount {
+private:
+    double interestRate;
+
+public:
+    SavingsAccount(int accountNumber, const string& ownerName, double initialBalance, double interestRate)
+        : BankAccount(accountNumber, ownerName, initialBalance), interestRate(interestRate) {
+    }
+    void applyInterest() {
+        double interest = getBalance() * interestRate / 100;
+        deposit(interest);  
+        cout << "Начислены проценты: " << interest << ". Новый баланс: " << getBalance() << endl;
+    }
+    double getBalance() const {
+        return balance;
+    }
+};
+
+int main() {
+    BankAccount account1(12345, "Alice", 1000.0);
+    account1.displayAccountInfo();
+    account1.deposit(500.0);  
+    account1.withdraw(200.0); 
+    account1.displayAccountInfo();
+
+    
+    SavingsAccount savingsAccount1(67890, "Bob", 2000.0, 5.0); 
+    savingsAccount1.displayAccountInfo();
+    savingsAccount1.deposit(1000.0);  
+    savingsAccount1.withdraw(300.0); 
+    savingsAccount1.applyInterest(); 
+    savingsAccount1.displayAccountInfo();
+
+    return 0;
+}
